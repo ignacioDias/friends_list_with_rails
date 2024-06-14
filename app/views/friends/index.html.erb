@@ -1,31 +1,37 @@
-<table class="table table-striped table-bordered table-hover">
-  <thead class = "thead-dark">
-  <tr>
-    <th>First name</th>
-    <th>Last name</th>
-    <th>Email</th>
-    <th>Phone</th>
-    <th>Twitter</th>
-    <th colspan="3"></th>
-  </tr>
-  </thead>
-  <tbody id="friends">
-  <% @friends.each do |friend| %>
-    <%if friend.user == current_user %>
-      <tr>
-        <td><%= friend.first_name %></td>
-        <td><%= friend.last_name %></td>
-        <td><%= friend.email %></td>
-        <td><%= friend.phone %></td>
-        <td><%= friend.twitter %></td>
-        <td><%= link_to "Show", friend, class: "btn btn-primary" %> </td>
-        <td><%= link_to "Edit", edit_friend_path(friend), class: "btn btn-secondary" %></td>
-        <td><%= button_to "Delete", friend, data: { confirm: 'Are you sure?' }, method: :delete, class: "btn btn-danger" %></td>
+<%if user_signed_in? %>
+  <table class="table table-striped table-bordered table-hover">
+    <thead class = "thead-dark">
+    <tr>
+      <th>Full name</th>
+      <th>Email</th>
+      <th>Phone</th>
+      <th>Twitter</th>
+      <th colspan="1"></th>
+    </tr>
+    </thead>
+    <tbody id="friends">
+    <% @friends.each do |friend| %>
+      <%if friend.user == current_user %>
+        <tr>
+          <td><%= link_to friend.first_name + ' ' + friend.last_name, friend %></td>
+          <td><%= friend.email %></td>
+          <td><%= friend.phone %></td>
+          <td><%= friend.twitter %></td>
+          <td><%= button_to "Delete", friend, data: { confirm: 'Are you sure?' }, method: :delete, class: "btn btn-outline-danger" %></td>
 
-      </tr>
-    <%end %>
-  <% end %>
-  </tbody>
-</table>
-<%= link_to "New friend", new_friend_path, class: "btn btn-secondary" %>
-
+        </tr>
+      <%end %>
+    <% end %>
+    </tbody>
+  </table>
+  <%= link_to "New friend", new_friend_path, class: "btn btn-secondary" %>
+<%else %>
+  <div class="jumbotron text-center">
+    <h1>Bienvenido a la Lista de Amigos</h1>
+    <p class="lead">Para gestionar tu lista de amigos, por favor regístrate o inicia sesión.</p>
+    <hr class="my-4">
+    <p>Con nuestra aplicación, puedes añadir, editar y eliminar amigos de tu lista fácilmente.</p>
+    <%= link_to 'Registrarse', new_user_registration_path, class: 'btn btn-dark btn-lg mx-2' %>
+    <%= link_to 'Iniciar Sesión', new_user_session_path, class: 'btn btn-secondary btn-lg mx-2' %>
+  </div>
+<%end %>
