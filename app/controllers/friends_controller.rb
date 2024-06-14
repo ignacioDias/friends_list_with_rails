@@ -1,19 +1,23 @@
 class FriendsController < ApplicationController
   before_action :set_friend, only: %i[ show edit update destroy ]
-  before_action :authenticate_user!
-
+  before_action :authenticate_user!, except: [:index]
+  before_action :correct_user, only: [:show, :edit, :update, :destroy]
   # GET /friends or /friends.json
   def index
     @friends = Friend.all
   end
-
+  def correct_user
+    @friend = current_user.friends.find_by(id: params[:id])
+    redirect_to friend_path, notice: "Not authorized to edit this" if @friend.nil?
+  end
   # GET /friends/1 or /friends/1.json
   def show
   end
 
   # GET /friends/new
   def new
-    @friend = Friend.new
+    # @friend = Friend.new
+    @friend = current_user.friends.build
   end
 
   # GET /friends/1/edit
@@ -22,8 +26,8 @@ class FriendsController < ApplicationController
 
   # POST /friends or /friends.json
   def create
-    @friend = Friend.new(friend_params)
-
+    # @friend = Friend.new(friend_params)
+    @friend = current_user.friends.build(friend_params)
     respond_to do |format|
       if @friend.save
         format.html { redirect_to friend_url(@friend), notice: "Friend was successfully created." }
@@ -51,7 +55,6 @@ class FriendsController < ApplicationController
   # DELETE /friends/1 or /friends/1.json
   def destroy
     @friend.destroy!
-
     respond_to do |format|
       format.html { redirect_to friends_url, notice: "Friend was successfully destroyed." }
       format.json { head :no_content }
